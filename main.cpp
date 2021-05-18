@@ -1,5 +1,5 @@
 /*
-    g++ main.cpp -std=c++14 -o exe
+    g++ main.cpp -std=c++17 -o exe
 */
 
 #include "test_transform_iterator.cpp"

@@ -1,5 +1,5 @@
-#ifndef STD_EXT_OUTPUT_TRANSFORM_ITERATOR_INCLUDED_
-#define STD_EXT_OUTPUT_TRANSFORM_ITERATOR_INCLUDED_
+#ifndef STD_EXT_TRANSFORM_ITERATOR_INCLUDED_
+#define STD_EXT_TRANSFORM_ITERATOR_INCLUDED_
 
 #include <utility>
 #include <iterator>
@@ -7,6 +7,8 @@
 #include "assignable.hpp"
 
 namespace stdext {
+
+namespace output {
 
    /**
       \brief  shifts the transform function into the output iterator.
@@ -17,21 +19,21 @@ namespace stdext {
    */
 
    template<typename Iterator, typename Function>
-   class output_transform_iterator
+   class transform_iterator
    {
       Iterator iterator_;
       assignable<Function> function_;
 
    public:
-      explicit output_transform_iterator(Iterator iterator, Function function)
+      explicit transform_iterator(Iterator iterator, Function function)
          : iterator_(std::move(iterator))
          , function_(std::move(function))
       {}
 
-      output_transform_iterator& operator++() { ++iterator_; return *this; }
-      output_transform_iterator& operator*() { return *this; }
+      transform_iterator& operator++() { ++iterator_; return *this; }
+      transform_iterator& operator*() { return *this; }
       template<typename T>
-      output_transform_iterator& operator=(T const& value)
+      transform_iterator& operator=(T const& value)
       {
          *iterator_ = function_.get()(value);
          return *this;
@@ -40,31 +42,33 @@ namespace stdext {
    };
 
    template<typename Function>
-   class output_transformer
+   class transformer
    {
       Function function_;
 
    public:
-      explicit output_transformer(Function function) : function_(function) {}
+      explicit transformer(Function function) : function_(function) {}
       template<typename Iterator>
-      output_transform_iterator<Iterator, Function> operator()(Iterator iterator) const
+      transform_iterator<Iterator, Function> operator()(Iterator iterator) const
       {
-         return output_transform_iterator<Iterator, Function>(iterator, function_);
+         return transform_iterator<Iterator, Function>(iterator, function_);
       }
    };
 
    template<typename Function>
-   output_transformer<Function> make_output_transformer(Function function)
+   transformer<Function> make_transformer(Function function)
    {
-      return output_transformer<Function>(function);
+      return transformer<Function>(function);
    }
+
+}  // namespace output
 
 }  // namespace stdext
 
 namespace std
 {
    template<typename Iterator, typename Function>
-   struct iterator_traits<stdext::output_transform_iterator<Iterator, Function>>
+   struct iterator_traits<stdext::output::transform_iterator<Iterator, Function>>
    {
       using iterator_category = typename iterator_traits<Iterator>::iterator_category;
       using value_type = typename iterator_traits<Iterator>::value_type;
@@ -72,4 +76,4 @@ namespace std
 
 } // namespace std
 
-#endif // STD_EXT_OUTPUT_TRANSFORM_ITERATOR_INCLUDED_
+#endif // STD_EXT_TRANSFORM_ITERATOR_INCLUDED_

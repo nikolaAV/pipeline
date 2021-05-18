@@ -13,14 +13,14 @@ namespace alt {
 template< typename InputIt, typename OutputIt, typename UnaryOperation >
 OutputIt transform(InputIt first, InputIt last, OutputIt out, UnaryOperation op)
 {
-   auto const converter = stdext::make_output_transformer(op);
+   auto const converter = stdext::output::make_transformer(op);
    return std::copy(first, last, converter(out)).get_underlying();
 }
 
 template< typename InputIt, typename OutputIt, typename UnaryPredicate, typename UnaryOperation>
 OutputIt transform_if(InputIt first, InputIt last, OutputIt out, UnaryPredicate pred, UnaryOperation op)
 {
-   auto const converter = stdext::make_output_transformer(op);
+   auto const converter = stdext::output::make_transformer(op);
    return std::copy_if(first, last, converter(out), pred).get_underlying();
 }
 
