@@ -5,6 +5,7 @@
 #include <cassert>
 
 #include "transform_iterator.hpp"
+#include "filter_iterator.hpp"
 
 namespace test_transform_iterator {
 
@@ -99,6 +100,29 @@ void algo_transform_if()
    assert(result == expected);
 }
 
-
 } // namespace test_transform_iterator
 
+
+namespace test_filter_iterator {
+
+template< typename InputIt, typename OutputIt, typename UnaryPredicate, typename UnaryOperation>
+OutputIt copy_if(InputIt first, InputIt last, OutputIt out, UnaryPredicate pred, UnaryOperation op)
+{
+   auto const filter = stdext::input::make_transformer(pred);
+   return copy(filter(first, last), filter(last, last), out);
+}
+
+using namespace std;
+
+void algo_copy_if()
+{
+   vector<int> const in = { 0,1,2,3,4,5,6,7,8,9 };
+   vector<int> expected = { 0,2,4,6,8 };
+   auto const even = [](auto v) {return v % 2 == 0; };
+   vector<int> result;
+
+   copy_if(in.begin(), in.end(), back_inserter(result), even);
+   assert(result == expected);
+}
+
+} // namespace test_filter_iterator
